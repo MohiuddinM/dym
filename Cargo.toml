@@ -1,5 +1,5 @@
 [package]
-name = "did_you_mean"
+name = "dym"
 version = "0.1.0"
 authors = ["hoggetaylor <u0900375@utah.edu>"]
 

@@ -1,6 +1,6 @@
-extern crate did_you_mean;
+extern crate dym;
 
-use did_you_mean::dym::*;
+use dym::*;
 use std::env;
 
 fn main() {
