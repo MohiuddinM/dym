@@ -1,32 +1,34 @@
 use std::collections::HashSet;
 use std::thread;
 
-pub enum Transformation {
-    Delete(usize),          // Delete the character at index: usize
-    Insert(char, usize),    // Insert the character: char at index: usize
-    Swap(usize),            // Swap the character at index: usize with the character at index+1
-    Replace(usize, char),   // Replace the character held at index: usize with the character: char
+pub struct Lexicon<'l> {
+    words: HashSet<&'l str>,
 }
 
-pub type Dictionary<'d> = HashSet<&'d str>;
+impl<'l> Lexicon<'l> {
+    pub fn new() -> Self {
+        Lexicon { words: HashSet::new() }
+    }
+    
+    pub fn insert(&mut self, word: &'l str) {
+        self.words.insert(word);
+    }
 
-pub trait SpellChecker {
-    fn suggest(&self, word: &str) -> Vec<String>;
-}
+    pub fn contains(&self, word: &str) -> bool {
+        self.words.contains(word)
+    }
 
-impl<'d> SpellChecker for Dictionary<'d> {
-
-    fn suggest(&self, word: &str) -> Vec<String> {
+    pub fn get_suggestions(&self, word: &str) -> Vec<String> {
         let mut suggestions = HashSet::<String>::new();
 
         // If word is a valid word, don't compute anything
-        if let Some(word) = self.get(word) {
+        if let Some(word) = self.words.get(word) {
             suggestions.insert(word.to_string());
             return suggestions.into_iter().collect();
         }
 
         for possible in get_permutations(word).into_iter()
-                        .filter(|w| self.contains(w.as_str())) {
+                        .filter(|w| self.words.contains(w.as_str())) {
             suggestions.insert(possible);
         }
 
@@ -120,18 +122,18 @@ fn insert_char(word: &str, i: usize, insert: char) -> String {
 
 #[cfg(test)]
 mod tests {
-    use dym;
+    use super::{get_permutations, delete_char, replace_char, insert_char, swap_chars};
 
     #[test]
-    fn permutations() {
-        let permutations = dym::get_permutations(&"hello");
+    fn permutations_test() {
+        let permutations = get_permutations(&"hello");
         println!("{:?}", permutations);
     }
 
     #[test]
-    fn permutations_for_push() {
+    fn permutations_for_push_test() {
         let mut seen_push = false;
-        for permutation in dym::get_permutations(&"pus") {
+        for permutation in get_permutations(&"pus") {
             println!("{}", permutation);
             if permutation == "push".to_string() {
                 seen_push = true;
@@ -141,32 +143,32 @@ mod tests {
     }
     
     #[test]
-    fn delete_char() {
-        let deleted = dym::delete_char(&"push", 3);
+    fn delete_char_test() {
+        let deleted = delete_char(&"push", 3);
         assert_eq!(deleted, "pus".to_string());
     }
     
     #[test]
-    fn swap_chars() {
-        let swapped = dym::swap_chars(&"heck", 2);
+    fn swap_chars_test() {
+        let swapped = swap_chars(&"heck", 2);
         assert_eq!(swapped, "hekc".to_string());
     }
 
     #[test]
-    fn replace_char() {
-        let replaced = dym::replace_char(&"cow", 1, 'e');
+    fn replace_char_test() {
+        let replaced = replace_char(&"cow", 1, 'e');
         assert_eq!(replaced, "cew".to_string());
     }
 
     #[test]
-    fn insert_char() {
-        let inserted = dym::insert_char(&"cow", 1, 'e');
+    fn insert_char_test() {
+        let inserted = insert_char(&"cow", 1, 'e');
         assert_eq!(inserted, "ceow".to_string());
     }
 
     #[test]
-    fn insert_char_end() {
-        let inserted = dym::insert_char(&"pus", 3, 'h');
+    fn insert_char_end_test() {
+        let inserted = insert_char(&"pus", 3, 'h');
         assert_eq!(inserted, "push".to_string());
     }
 
