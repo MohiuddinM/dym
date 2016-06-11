@@ -1,4 +1,5 @@
 use std::collections::HashSet;
+use std::thread;
 
 pub enum Transformation {
     Delete(usize),          // Delete the character at index: usize
@@ -34,30 +35,55 @@ impl<'d> SpellChecker for Dictionary<'d> {
 }
 
 fn get_permutations(word: &str) -> Vec<String> {
-    let mut permutations = Vec::new(); 
-
-    for i in 0..word.len() {
-        // Deletions
-        permutations.push(delete_char(word, i));
-
-        for c in (b'a'..b'z'+1).map(|c| c as char) {
-            // Replacements
-            permutations.push(replace_char(word, i, c));
+    let mut handles = Vec::new();
+    // Deletions
+    let del_word = word.clone().to_string();
+    handles.push(thread::spawn(move || {
+        let mut deletions = Vec::new();
+        for i in 0..del_word.len() {
+            deletions.push(delete_char(&del_word, i));
         }
-    }
+        deletions
+    }));
 
-    for i in 0..word.len()-1 {
-        // Swaps
-        permutations.push(swap_chars(word, i));
-    }
-
-    for i in 0..word.len()+1 {
-        // Insertions
-        for c in (b'a'..b'z'+1).map(|c| c as char) {
-            permutations.push(insert_char(word, i, c));
+    // Replacements
+    let rep_word = word.clone().to_string();
+    handles.push(thread::spawn(move || {
+        let mut replacements = Vec::new();
+        for i in 0..rep_word.len() {
+            for c in (b'a'..b'z'+1).map(|c| c as char) {
+                replacements.push(replace_char(&rep_word, i, c));
+            }
         }
-    }
+        replacements
+    }));
 
+    // Swaps
+    let swap_word = word.clone().to_string();
+    handles.push(thread::spawn(move || {
+        let mut swaps = Vec::new();
+        for i in 0..swap_word.len()-1 {
+            swaps.push(swap_chars(&swap_word, i));
+        }
+        swaps
+    }));
+
+    // Insertions
+    let ins_word = word.clone().to_string();
+    handles.push(thread::spawn(move || {
+        let mut inserts = Vec::new();
+        for i in 0..ins_word.len()+1 {
+            for c in (b'a'..b'z'+1).map(|c| c as char) {
+                inserts.push(insert_char(&ins_word, i, c));
+            }
+        }
+        inserts
+    }));
+
+    let mut permutations = Vec::<String>::new();
+    for handle in handles.into_iter() {
+        permutations.extend_from_slice(handle.join().unwrap().as_slice());
+    }
     permutations
 }
 
