@@ -27,10 +27,18 @@ impl<'l> Lexicon<'l> {
             return suggestions.into_iter().collect();
         }
 
-        for possible in get_permutations(word).into_iter()
-                        .filter(|w| self.words.contains(w.as_str())) {
+        let perm1 = get_permutations(word);
+        let mut perm2 = Vec::new();
+        for permutation in perm1.iter() {
+            perm2.extend_from_slice(get_permutations(permutation).as_slice());
+        }
+
+        for possible in perm1.into_iter()
+                             .chain(perm2.into_iter())
+                             .filter(|w| self.words.contains(&w.as_str())) {
             suggestions.insert(possible);
         }
+                                     
 
         suggestions.into_iter().collect()
     }
