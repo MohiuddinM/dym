@@ -1,50 +1,85 @@
-use std::collections::HashSet;
+pub mod evaluator;
+
+use std::collections::{HashMap, HashSet};
 use std::thread;
 
-pub struct Lexicon<'l> {
-    words: HashSet<&'l str>,
+pub struct Lexicon {
+    words: HashSet<String>,
+    chars: HashMap<usize, HashSet<char>>,
 }
 
-impl<'l> Lexicon<'l> {
+impl Lexicon {
     pub fn new() -> Self {
-        Lexicon { words: HashSet::new() }
+        Lexicon { 
+            words: HashSet::new(),
+            chars: HashMap::new(),
+        }
     }
     
-    pub fn insert(&mut self, word: &'l str) {
-        self.words.insert(word);
+    pub fn insert(&mut self, word: &str) {
+        let word = word.to_lowercase().trim().to_string();
+        self.words.insert(word.clone());
+        for (i, c) in word.chars().enumerate() {
+            if !self.chars.contains_key(&i) {
+                let mut set = HashSet::new();
+                set.insert(c);
+                self.chars.insert(i, set);
+            } else {
+                self.chars.get_mut(&i).unwrap().insert(c);
+            }
+        }
+    }
+    
+    pub fn insert_all(&mut self, words: Vec<&str>) {
+        for word in words.into_iter() {
+            self.insert(word);
+        }
     }
 
     pub fn contains(&self, word: &str) -> bool {
-        self.words.contains(word)
+        self.words.contains(&word.to_lowercase().trim().to_string())
     }
 
     pub fn get_suggestions(&self, word: &str) -> Vec<String> {
         let mut suggestions = HashSet::<String>::new();
 
         // If word is a valid word, don't compute anything
-        if let Some(word) = self.words.get(word) {
+        if self.contains(word.to_lowercase().trim()) {
             suggestions.insert(word.to_string());
             return suggestions.into_iter().collect();
         }
 
-        let perm1 = get_permutations(word);
-        let mut perm2 = Vec::new();
+        let perm1 = get_permutations(&self.chars, word.to_lowercase().trim());
+        let single_edits: Vec<String> = perm1.iter().filter(|w| self.words.contains(*w)).map(|w| w.clone()).collect();
+        if !single_edits.is_empty() {
+            return single_edits;
+        }
+
+        let mut handles = Vec::new();
         for permutation in perm1.iter() {
-            perm2.extend_from_slice(get_permutations(permutation).as_slice());
+            let permutation = permutation.to_string();
+            let chars = self.chars.clone();
+            handles.push(thread::spawn(move || {
+                get_permutations(&chars, &permutation) 
+            }));
+        }
+        
+        let mut perm2 = Vec::new();
+        for handle in handles.into_iter() {
+            perm2.extend_from_slice(handle.join().unwrap().as_slice());
         }
 
         for possible in perm1.into_iter()
                              .chain(perm2.into_iter())
-                             .filter(|w| self.words.contains(&w.as_str())) {
+                             .filter(|w| self.words.contains(w)) {
             suggestions.insert(possible);
         }
                                      
-
         suggestions.into_iter().collect()
     }
 }
 
-fn get_permutations(word: &str) -> Vec<String> {
+fn get_permutations(chars: &HashMap<usize, HashSet<char>>, word: &str) -> Vec<String> {
     let mut handles = Vec::new();
     // Deletions
     let del_word = word.clone().to_string();
@@ -58,11 +93,14 @@ fn get_permutations(word: &str) -> Vec<String> {
 
     // Replacements
     let rep_word = word.clone().to_string();
+    let rep_chars = chars.clone();
     handles.push(thread::spawn(move || {
         let mut replacements = Vec::new();
         for i in 0..rep_word.len() {
-            for c in (b'a'..b'z'+1).map(|c| c as char) {
-                replacements.push(replace_char(&rep_word, i, c));
+            if let Some(set) = rep_chars.get(&i) {
+                for c in set.iter(){
+                    replacements.push(replace_char(&rep_word, i, *c));
+                }
             }
         }
         replacements
@@ -80,11 +118,14 @@ fn get_permutations(word: &str) -> Vec<String> {
 
     // Insertions
     let ins_word = word.clone().to_string();
+    let ins_chars = chars.clone();
     handles.push(thread::spawn(move || {
         let mut inserts = Vec::new();
         for i in 0..ins_word.len()+1 {
-            for c in (b'a'..b'z'+1).map(|c| c as char) {
-                inserts.push(insert_char(&ins_word, i, c));
+            if let Some(set) = ins_chars.get(&i) {
+                for c in set.iter() {
+                    inserts.push(insert_char(&ins_word, i, *c));
+                }
             }
         }
         inserts
