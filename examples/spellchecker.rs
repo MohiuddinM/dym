@@ -1,6 +1,6 @@
 extern crate dym;
 
-use dym::*;
+use dym::lexicon::Lexicon;
 use std::fs::File;
 use std::io::{stdin, Read};
 
@@ -25,13 +25,8 @@ fn main() {
         let mut word = String::new();
         stdin().read_line(&mut word).unwrap();
         let word = word.trim();
-        if lexicon.contains(&word) {
-            println!("    {} is spelled correctly!", word);
-        } else {
-            println!("    {} is not a valid word! did you mean:", word);
-            for suggestion in lexicon.get_suggestions(&word) {
-                println!("        {}", suggestion);
-            }
+        for suggestion in lexicon.did_you_mean(&word) {
+            println!("        {}", suggestion);
         }
     }
 }
