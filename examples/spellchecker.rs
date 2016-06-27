@@ -1,6 +1,6 @@
 extern crate dym;
 
-use dym::lexicon::Lexicon;
+use dym::Lexicon;
 use std::fs::File;
 use std::io::{stdin, Read};
 
