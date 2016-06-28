@@ -4,7 +4,7 @@ use dym::Lexicon;
 use std::fs::File;
 use std::io::{stdin, Read};
 
-const DICT_PATH: &'static str = "/home/taylor/Source/rust/did_you_mean/examples//words.txt";
+const DICT_PATH: &'static str = "/home/taylor/Source/rust/did_you_mean/examples/words.txt";
 
 fn main() {
     let mut lexicon = Lexicon::new();
@@ -25,8 +25,13 @@ fn main() {
         let mut word = String::new();
         stdin().read_line(&mut word).unwrap();
         let word = word.trim();
-        for suggestion in lexicon.did_you_mean(&word) {
-            println!("        {}", suggestion);
+        if lexicon.contains(&word) {
+            println!("    {} is spelled correctly!", word);
+        } else {
+            println!("    {} is not a word, did you mean:", word);
+            for correction in lexicon.corrections_for(&word) {
+                println!("        {}", correction);
+            }
         }
     }
 }

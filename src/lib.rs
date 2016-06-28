@@ -11,47 +11,57 @@ pub struct Lexicon {
 
 impl Lexicon {
 
+    /// Creates an empty Lexicon
     pub fn new() -> Self {
         Lexicon {
             words: Trie::new(),
         }
     }
 
+    /// Inserts a copy of the given word into the Lexicon
+    /// after converting it to lowercase and trimming whitespace
     pub fn insert(&mut self, word: &str) {
-        self.words.insert(word);
+        let word = word.trim().to_lowercase(); 
+        self.words.insert(&word);
     }
 
+    /// Inserts a copy of all given words into the Lexicon
+    /// after converting them to lowercase and trimming whitespace
     pub fn insert_all(&mut self, words: &[&str]) {
         for word in words {
             self.insert(word);
         }
     }
 
+    /// Returns true if the Lexicon contains the given word
     pub fn contains(&self, word: &str) -> bool {
-        self.words.contains(word)
+        let word = word.trim().to_lowercase();
+        self.words.contains(&word)
     }
 
-    pub fn did_you_mean(&self, word: &str) -> Vec<String> {
-        println!("Generating first permutations");
-        let perms1 = Lexicon::get_permutations(word); 
+    /// Returns all words in the Lexicon that are at most
+    /// two edits away from the given word.
+    pub fn corrections_for(&self, word: &str) -> Vec<String> {
+        let word = word.trim().to_lowercase();
 
-        println!("Generating second permutations");
+        let perms1 = Lexicon::generate_permutations(&word); 
         let mut perms = perms1.clone();
         for perm in perms1.iter() {
-            perms.extend_from_slice(Lexicon::get_permutations(perm).as_slice()); 
+            perms.extend_from_slice(Lexicon::generate_permutations(perm).as_slice()); 
         }
 
-        println!("Looking up suggestions");
-        let mut suggestions = Vec::new();
+        let mut corrections = Vec::new();
         for perm in perms.iter() {
             let matches = self.words.all_matches(perm);
-            suggestions.extend_from_slice(matches.as_slice());
+            corrections.extend_from_slice(matches.as_slice());
         }
 
-        suggestions
+        corrections 
     }
 
-    fn get_permutations(word: &str) -> Vec<String> {
+    /// Generates all words that are 1 edit away from the given word.
+    /// Wildcards are used to minimize the number of permutations generated.
+    fn generate_permutations(word: &str) -> Vec<String> {
         let mut perms = HashSet::new();
         
         // insertions

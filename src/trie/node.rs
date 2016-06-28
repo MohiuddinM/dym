@@ -8,6 +8,7 @@ pub struct Node {
 
 impl Node {
 
+    /// Creates a new Node with is_word set to false by default
     pub fn new() -> Self {
         Node { nodes: HashMap::new(), is_word: false }
     }
@@ -23,6 +24,4 @@ impl Node {
     pub fn get_node<'a>(&'a self, ch: char) -> Option<&'a Node> {
         self.nodes.get(&ch).map(|node| &**node)
     }
-
-    // TODO: make nodes private and implement populated_branches
 }

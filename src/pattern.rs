@@ -14,6 +14,9 @@ pub struct Pattern {
 
 impl Pattern {
 
+    /// Builds a Pattern from the given str
+    /// the character '*' is a wildcard
+    /// for example: "c*t" would match "cat" and "cut"
     pub fn from_str(pattern_str: &str) -> Self {
         let mut pattern = Vec::with_capacity(pattern_str.len());
         for c in pattern_str.chars() {
@@ -30,6 +33,7 @@ impl Pattern {
         }
     }
 
+    /// Returns an iterator over the elements of this pattern
     pub fn iter(&self) -> Iter<CharMatcher> {
         self.pattern.iter()
     }

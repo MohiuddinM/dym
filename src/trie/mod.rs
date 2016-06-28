@@ -10,10 +10,13 @@ pub struct Trie {
 }
 
 impl Trie {
+    
+    /// Creates an empty Trie
     pub fn new() -> Trie {
         Trie { root: Node::new() }
     }
 
+    /// Inserts a copy of the given word into the Trie
     pub fn insert(&mut self, word: &str) {
         let mut node = &mut self.root;
         for character in word.chars() {
@@ -22,6 +25,7 @@ impl Trie {
         node.is_word = true;
     }
 
+    /// Returns true if the given word is held in the Trie
     pub fn contains(&self, word: &str) -> bool{
         let mut node = &self.root;
         for character in word.chars() {
@@ -33,14 +37,18 @@ impl Trie {
         node.is_word
     }
 
+    /// Searches the Trie for all words that match the given Pattern
     pub fn all_matches(&self, pattern: &str) -> Vec<String> {
         let pattern = Pattern::from_str(pattern);
         self.recurse_pattern(pattern.iter(), &self.root, String::new())
     }
 
+    /// Recursively searches the Trie until the end of the iterator is reached
     fn recurse_pattern(&self, mut iter: Iter<CharMatcher>, node: &Node, mut trail: String) -> Vec<String> {
         let next = iter.next();
-        if next == None { // base case
+
+        // Base Case
+        if next == None { 
             if node.is_word {
                 return vec![trail];
             } else {
@@ -91,6 +99,12 @@ mod tests {
         trie.insert("car");
 
         let matches = trie.all_matches("c*t");
-        println!("{:?}", matches);
+
+        assert!(matches.contains(&"cat".to_string()));
+        assert!(matches.contains(&"cut".to_string()));
+        assert!(matches.contains(&"cot".to_string()));
+        
+        assert!(!matches.contains(&"dog".to_string()));
+        assert!(!matches.contains(&"car".to_string()));
     }
 }

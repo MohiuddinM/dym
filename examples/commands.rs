@@ -23,10 +23,10 @@ fn main() {
     if lexicon.contains(&command) {
         println!("Doing {}!", command);
     } else {
-        let suggestions = lexicon.did_you_mean(&command);
+        let corrections = lexicon.corrections_for(&command);
         println!("'{}' is not a command! did you mean:", command);
-        for suggestion in suggestions.into_iter() {
-            println!("    {}", suggestion);
+        for correction in corrections.into_iter() {
+            println!("    {}", correction);
         }
     }
 }
