@@ -5,7 +5,7 @@ use std::env::args;
 
 fn main() {
     let mut lexicon = Lexicon::new();
-    lexicon.insert_all(vec![
+    lexicon.insert_all(&vec![
         "config", "help", "init", "clone", "add", "status", "diff",
         "commit", "reset", "rm", "mv", "branch", "checkout", "merge",
         "mergetool", "log", "stash", "tag", "fetch", "pull", "push",
@@ -23,7 +23,7 @@ fn main() {
     if lexicon.contains(&command) {
         println!("Doing {}!", command);
     } else {
-        let suggestions = lexicon.get_suggestions(&command);
+        let suggestions = lexicon.did_you_mean(&command);
         println!("'{}' is not a command! did you mean:", command);
         for suggestion in suggestions.into_iter() {
             println!("    {}", suggestion);

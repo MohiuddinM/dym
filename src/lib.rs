@@ -27,6 +27,10 @@ impl Lexicon {
         }
     }
 
+    pub fn contains(&self, word: &str) -> bool {
+        self.words.contains(word)
+    }
+
     pub fn did_you_mean(&self, word: &str) -> Vec<String> {
         println!("Generating first permutations");
         let perms1 = Lexicon::get_permutations(word); 
