@@ -50,13 +50,15 @@ impl Lexicon {
             perms.extend_from_slice(Lexicon::generate_permutations(perm).as_slice()); 
         }
 
-        let mut corrections = Vec::new();
+        let mut corrections = HashSet::new();
         for perm in perms.iter() {
             let matches = self.words.all_matches(perm);
-            corrections.extend_from_slice(matches.as_slice());
+            for m in matches.into_iter() {
+                corrections.insert(m);
+            }
         }
 
-        corrections 
+        corrections.into_iter().collect() 
     }
 
     /// Generates all words that are 1 edit away from the given word.
