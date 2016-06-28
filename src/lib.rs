@@ -44,7 +44,7 @@ impl Lexicon {
         println!("Looking up suggestions");
         let mut suggestions = Vec::new();
         for perm in perms.iter() {
-            let matches = self.all_matches(perm);
+            let matches = self.words.all_matches(perm);
             suggestions.extend_from_slice(matches.as_slice());
         }
 
@@ -76,23 +76,8 @@ impl Lexicon {
             perms.insert(string);
         }
         
-        // swaps
-        for i in 0..word.len()-1 {
-            let mut swapped = word[..i].to_string();
-            let mut chars = word.chars();
-            let first_char = chars.nth(i).unwrap();
-            let second_char = chars.next().unwrap();
-            swapped.push(second_char);
-            swapped.push(first_char);
-            swapped.push_str(&word[i+2..word.len()]);
-            perms.insert(swapped);
-        }
         let result: Vec<String> = perms.into_iter().collect();
         result
-    }
-
-    pub fn all_matches(&self, query: &str) -> Vec<String> {
-        self.words.all_matches(query)
     }
 }
 
@@ -105,24 +90,5 @@ mod tests {
         let mut lex = Lexicon::new();
         lex.insert("hello");
         lex.insert("goodbye");
-    }
-
-    #[test]
-    fn test_matches() {
-        let mut lex = Lexicon::new();
-        lex.insert("bog");
-        lex.insert("bat");
-        lex.insert("sin");
-        lex.insert("cat");
-        lex.insert("rug");
-        lex.insert("cut");
-        lex.insert("lay");
-        lex.insert("day");
-        lex.insert("say");
-        lex.insert("cot");
-
-        for m in lex.all_matches("c") {
-            println!("{}", m);
-        }
     }
 }
