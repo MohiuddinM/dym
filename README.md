@@ -1,2 +1,2 @@
-# did_you_mean
-A simple spell checking library
+# dym
+A simple spelling corrector for Rust.
