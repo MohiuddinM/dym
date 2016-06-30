@@ -1,6 +1,11 @@
 [package]
 name = "dym"
-version = "0.1.0"
+version = "1.0.0"
 authors = ["hoggetaylor <u0900375@utah.edu>"]
+description = "Did You Mean? A simple spelling corrector."
+documentation = "https://hoggetaylor.github.io/dym/dym"
+repository = "https://github.com/hoggetaylor/dym"
+readme = "./README.md"
+keywords = ["spelling", "corrector", "spellcheck"]
 
 [dependencies]
