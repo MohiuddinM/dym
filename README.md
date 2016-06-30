@@ -3,8 +3,15 @@ A simple spelling corrector for Rust.
 
 Inspired by [Norvig's Spelling Corrector](http://norvig.com/spell-correct.html)
 
+## Including in Cargo.toml 
+
+    [dependencies]
+    dym = "1.0.0"
+
 ## Usage
     
+    extern crate dym;
+
     use dym::Lexicon;
 
     let mut lex = Lexicon::new();
