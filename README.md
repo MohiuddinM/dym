@@ -21,15 +21,9 @@ Inspired by [Norvig's Spelling Corrector](http://norvig.com/spell-correct.html)
 
     let corrections = lex.corrections_for("hel");
 
-## Spellchecker Example 
-
-Takes in a dictionary file and will suggest corrections for words typed through stdin.
-
-    cargo run --release --example spellchecker examples/words.txt
-
 ## Commands Example
 
-Type a misspelled git command to have it suggest corrections for it.
+Type a misspelled git command.
 
     cargo run --release --example commands pul
 
@@ -38,4 +32,10 @@ This outputs:
     'pul' is not a command! did you mean:
         push
         pull
+
+## Spellchecker Example 
+
+Takes in a dictionary file and will suggest corrections for words typed through stdin.
+
+    cargo run --release --example spellchecker examples/words.txt
 
