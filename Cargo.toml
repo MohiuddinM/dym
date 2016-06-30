@@ -1,6 +1,0 @@
-[package]
-name = "dym"
-version = "0.1.0"
-authors = ["hoggetaylor <u0900375@utah.edu>"]
-
-[dependencies]
