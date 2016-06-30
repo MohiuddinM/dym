@@ -3,12 +3,13 @@ extern crate dym;
 use dym::Lexicon;
 use std::fs::File;
 use std::io::{stdin, Read};
-
-const DICT_PATH: &'static str = "/home/taylor/Source/rust/dym/examples/words.txt";
+use std::env::args;
 
 fn main() {
+    let file_path = args().nth(1).unwrap();
+
     let mut lexicon = Lexicon::new();
-    let mut file = File::open(DICT_PATH).unwrap(); 
+    let mut file = File::open(file_path).unwrap(); 
     let mut contents = String::new();
     file.read_to_string(&mut contents).unwrap();
 
