@@ -7,5 +7,6 @@ documentation = "https://hoggetaylor.github.io/dym/dym"
 repository = "https://github.com/hoggetaylor/dym"
 readme = "./README.md"
 keywords = ["spelling", "corrector", "spellcheck"]
+license = "MIT"
 
 [dependencies]
