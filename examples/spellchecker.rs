@@ -4,7 +4,7 @@ use dym::Lexicon;
 use std::fs::File;
 use std::io::{stdin, Read};
 
-const DICT_PATH: &'static str = "/home/taylor/Source/rust/did_you_mean/examples/words.txt";
+const DICT_PATH: &'static str = "/home/taylor/Source/rust/dym/examples/words.txt";
 
 fn main() {
     let mut lexicon = Lexicon::new();
