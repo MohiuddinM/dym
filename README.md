@@ -19,7 +19,7 @@ Inspired by [Norvig's Spelling Corrector](http://norvig.com/spell-correct.html)
     lex.insert("goodbye");
     lex.insert("hell");
 
-    let corrections = lex.corrections_for("hel");
+    let corrections = lex.corrections_for("helo");
 
 ## Commands Example
 
