@@ -6,7 +6,7 @@ Inspired by [Norvig's Spelling Corrector](http://norvig.com/spell-correct.html)
 ## Including in Cargo.toml 
 
     [dependencies]
-    dym = "1.0.0"
+    dym = "^1.0.0"
 
 ## Usage
     
