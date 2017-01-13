@@ -30,6 +30,7 @@ fn main() {
             println!("    {} is spelled correctly!", word);
         } else {
             println!("    {} is not a word, did you mean:", word);
+            println!("    Best Match: {}\nOther Matches:", lexicon.best_match_for(&word));
             for correction in lexicon.corrections_for(&word) {
                 println!("        {}", correction);
             }
