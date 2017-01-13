@@ -10,3 +10,5 @@ keywords = ["spelling", "corrector", "spellcheck"]
 license = "MIT"
 
 [dependencies]
+fnv = "*"
+strsim = "*"
